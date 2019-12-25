@@ -35,6 +35,12 @@ kubectl config use-context default
 # kubectl version
 IFS=',' read -r -a DEPLOYMENTS <<< "${PLUGIN_DEPLOYMENT}"
 IFS=',' read -r -a CONTAINERS <<< "${PLUGIN_CONTAINER}"
+IFS=',' read -r -a LABELS <<< "${PLUGIN_LABEL}"
+# update deployment & cronjob by each label selector
+for LABEL in ${LABELS[@]}; do
+  kubectl -n ${PLUGIN_NAMESPACE} set image deployment -l=${LABEL} ${CONTAINER}=${PLUGIN_REPO}:${PLUGIN_TAG} --record
+  kubectl -n ${PLUGIN_NAMESPACE} set image cronjob -l=${LABEL} ${CONTAINER}=${PLUGIN_REPO}:${PLUGIN_TAG} --record
+done
 for DEPLOY in ${DEPLOYMENTS[@]}; do
   echo Deploying to $KUBERNETES_SERVER
   for CONTAINER in ${CONTAINERS[@]}; do

@@ -1,0 +1,69 @@
+kind: pipeline
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /drone/src
+
+steps:
+# - name: lint
+#   image: koalaman/shellcheck:latest
+#   commands:
+#     - "*.sh"
+- name: publish-edge
+  image: plugins/docker
+  settings:
+    repo: b5kio/drone-kubernetes
+	tags: 
+	- edge
+	- ${DRONE_COMMIT:0:8}-edge
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+  when:
+    branch:
+    - develop
+    local: false
+    event:
+    - push
+
+- name: publish-stable
+  image: plugins/docker
+  settings:
+    repo: b5kio/drone-kubernetes
+	tags: 
+	- stable
+	- ${DRONE_COMMIT:0:8}-stable
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+  when:
+    branch:
+    - master
+    local: false
+    event:
+	- push
+
+- name: publish-latest
+  image: plugins/docker
+  settings:
+    repo: b5kio/drone-kubernetes
+	tags: 
+	- latest
+	- ${DRONE_TAG##v}
+	- ${DRONE_COMMIT:0:8}-latest
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+  when:
+    ref:
+    - refs/tags/v*
+    local: false
+    event:
+    - tag
