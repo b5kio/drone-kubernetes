@@ -17,9 +17,9 @@ steps:
   image: plugins/docker
   settings:
     repo: b5kio/drone-kubernetes
-	tags: 
-	- edge
-	- ${DRONE_COMMIT:0:8}-edge
+    tags: 
+    - edge
+    - ${DRONE_COMMIT:0:8}-edge
     username:
       from_secret: docker_username
     password:
@@ -35,9 +35,9 @@ steps:
   image: plugins/docker
   settings:
     repo: b5kio/drone-kubernetes
-	tags: 
-	- stable
-	- ${DRONE_COMMIT:0:8}-stable
+    tags: 
+    - stable
+    - ${DRONE_COMMIT:0:8}-stable
     username:
       from_secret: docker_username
     password:
@@ -47,16 +47,16 @@ steps:
     - master
     local: false
     event:
-	- push
+    - push
 
 - name: publish-latest
   image: plugins/docker
   settings:
     repo: b5kio/drone-kubernetes
-	tags: 
-	- latest
-	- ${DRONE_TAG##v}
-	- ${DRONE_COMMIT:0:8}-latest
+    tags: 
+    - latest
+    - ${DRONE_TAG##v}
+    - ${DRONE_COMMIT:0:8}-latest
     username:
       from_secret: docker_username
     password:
